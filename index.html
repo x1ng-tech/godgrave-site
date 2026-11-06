@@ -546,7 +546,7 @@ nav.pn a.next{text-align:right}
 <header class="top">
   <button class="iconbtn" id="menuBtn" aria-label="Открыть оглавление" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 5h14M2 9h14M2 13h14"/></svg></button>
   <a class="brand" href="#start">God Grave<b class="lg">: </b><span class="lg">Chronicles of Mist and Ash</span></a>
-  <nav class="topnav" aria-label="Быстрые разделы"><a href="#konstruktor">Герой</a><a href="#mir">Книга</a><a href="#karty">Карты</a><a href="#snaryazhenie">Снаряжение</a><a href="#bestiariy">Бестиарий</a><a href="atlas.html#karta">Атлас</a></nav>
+  <nav class="topnav" aria-label="Быстрые разделы"><a href="#konstruktor">Герой</a><a href="#mir">Книга</a><a href="#karty">Карты</a><a href="#snaryazhenie">Снаряжение</a><a href="#bestiariy">Бестиарий</a><a href="#karta">Атлас</a></nav>
   <div class="search">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.5 10.5 14 14"/></svg>
     <input id="q" type="search" placeholder="Поиск по всему сайту" autocomplete="off" aria-label="Поиск по книге">
@@ -565,7 +565,7 @@ nav.pn a.next{text-align:right}
     <p class="eyebrow">Хроники Мёртвого Бога · книга правил 2.1</p>
     <h1>God Grave: <em>Chronicles of Mist and Ash</em></h1>
     <p class="sub">Хардкорное тёмное фэнтези с карточным боем. Девять статов, четыре класса, 300 двусторонних карт и мир, остывающий после смерти своего Бога.</p>
-    <div class="cta"><a class="pri" href="#mir">Читать книгу</a><a href="#konstruktor">Создать героя</a><a href="#karty">Карты</a><a href="#snaryazhenie">Снаряжение</a><a href="#bestiariy">Бестиарий</a><a href="atlas.html#karta">Атлас мира</a></div>
+    <div class="cta"><a class="pri" href="#mir">Читать книгу</a><a href="#konstruktor">Создать героя</a><a href="#karty">Карты</a><a href="#snaryazhenie">Снаряжение</a><a href="#bestiariy">Бестиарий</a><a href="#karta">Атлас мира</a></div>
   </div>
 </div>
 <p class="status wide">Числа карт, снаряжения и бестиария предварительные и ждут плейтеста. То, чего в книге пока нет, собрано на последней странице.</p>
@@ -611,7 +611,7 @@ nav.pn a.next{text-align:right}
         <p>275 существ мира Чело с характеристиками, способностями и таблицами добычи.</p>
       </div>
     </a>
-    <a class="home-card" href="atlas.html#karta" onclick="location.href='atlas.html#karta';return false">
+    <a class="home-card" href="#karta" onclick="showView('karta');return false">
       <img class="home-card-img" src="images/img_12.jpg" alt="Атлас">
       <div class="home-card-body">
         <h3>Атлас мира</h3>
@@ -622,9 +622,6 @@ nav.pn a.next{text-align:right}
 </div>
 
 <script>
-function $(id){ return document.getElementById(id); }
-function $$(sel){ return Array.from(document.querySelectorAll(sel)); }
-
 (function(){
   const dustLayer = document.querySelector('.dust-layer');
   if (!dustLayer) return;
@@ -6942,7 +6939,8 @@ const CS = (() => {
   }
   function rollD20(){ const r=Math.floor(Math.random()*20)+1; log('d20: '+r); }
   function rollInit(){ const lvl=+el('cs-lvl').value||1; const r=Math.floor(Math.random()*20)+1+lvl; log('Инициатива: d20+'+lvl+' = '+r); }
-  function log(t){ const L=el('cs-log'); L.textContent = t+'\n'+L.textContent; }
+  function log(t){ const L=el('cs-log'); L.textContent = t+'
+'+L.textContent; }
   function exportJSON(){
     const data={name:el('cs-name').value,origin:el('cs-origin').value,class:el('cs-class').value,lvl:+el('cs-lvl').value,stats:{}};
     document.querySelectorAll('.cs-stat-inp').forEach(i=>data.stats[i.dataset.stat]=+i.value);
@@ -7248,6 +7246,651 @@ const ENC = {
 };
 </script>
 </section>
+<section class="view" id="v-karta" data-view="karta" hidden>
+<header class="vhead" style="background:linear-gradient(180deg,rgba(11,10,13,.55) 0%,rgba(11,10,13,.95) 100%),url(images/map_bg.jpg) center center/cover;min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:28px">
+  <p class="eyebrow">Мир</p>
+  <h1 style="font-size:clamp(36px,6vw,56px);margin:0 0 8px">Тело Бога: карта мира</h1>
+  <p style="max-width:640px;color:var(--fg);font:15px var(--font-body);margin:0">Наведите на область карты, чтобы узнать подробности. Кликните по региону, чтобы открыть полный атлас.</p>
+</header>
+
+<style>
+.map-wrap{max-width:1000px;margin:18px auto;padding:0 18px}
+.map-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}
+.map-card h3{margin:0 0 8px;font:22px var(--font-display);color:var(--accent)}
+.map-card p{font:14px var(--font-body);color:var(--fg);line-height:1.6;margin:6px 0}
+.map-card .tag{display:inline-block;background:var(--bg);border:1px solid var(--line);color:var(--muted);padding:3px 10px;border-radius:4px;font:12px var(--font-ui);margin:4px 4px 0 0}
+.map-nav{display:flex;gap:12px;justify-content:space-between;margin:20px 0;flex-wrap:wrap}
+.map-nav a{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;text-decoration:none;color:var(--fg);flex:1;min-width:140px;transition:.15s}
+.map-nav a:hover{border-color:var(--accent);transform:translateY(-2px)}
+.map-nav a span{font:11px var(--font-ui);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.map-nav a strong{font:16px var(--font-display);color:var(--accent)}
+.world-svg-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:16px 0}
+.world-svg{width:100%;height:auto;display:block}
+.map-region{cursor:pointer;transition:all .25s}
+.map-region:hover{filter:url(#glow);stroke-width:2.5}
+</style>
+
+<div class="map-wrap">
+  <div class="world-svg-wrap">
+    <svg viewBox="0 0 800 500" class="world-svg" id="world-svg">
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a1f2d"/><stop offset="100%" stop-color="#1a1218"/></linearGradient>
+        <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f2a2d"/><stop offset="100%" stop-color="#121a1a"/></linearGradient>
+        <linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2d2a1f"/><stop offset="100%" stop-color="#1a1812"/></linearGradient>
+        <linearGradient id="grad4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2d1f1f"/><stop offset="100%" stop-color="#1a1212"/></linearGradient>
+        <linearGradient id="grad5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2d251f"/><stop offset="100%" stop-color="#1a1512"/></linearGradient>
+        <linearGradient id="grad6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f2d25"/><stop offset="100%" stop-color="#121a15"/></linearGradient>
+      </defs>
+      <!-- Background image -->
+      <image href="images/map_bg.jpg" width="800" height="500" preserveAspectRatio="xMidYMid slice" opacity="0.35"/>
+
+      <!-- Regions -->
+      <path id="reg-cranium" d="M300,50 Q400,20 500,50 Q520,100 480,140 Q400,160 320,140 Q280,100 300,50Z" fill="url(#grad1)" stroke="#d4af6a" stroke-width="1.5" class="map-region" data-region="cranium" data-atlas="lik"/>
+      <path id="reg-torso" d="M280,160 Q400,140 520,160 Q540,250 500,300 Q400,320 300,300 Q260,250 280,160Z" fill="url(#grad2)" stroke="#7a90b8" stroke-width="1.5" class="map-region" data-region="torso" data-atlas="spine"/>
+      <path id="reg-arms" d="M100,180 Q250,160 280,200 Q260,280 200,300 Q120,280 100,180Z M520,200 Q550,160 700,180 Q680,280 600,300 Q540,280 520,200Z" fill="url(#grad3)" stroke="#8aa060" stroke-width="1.5" class="map-region" data-region="arms" data-atlas="mines"/>
+      <path id="reg-legs" d="M300,330 Q400,310 500,330 Q520,420 480,480 Q400,490 320,480 Q280,420 300,330Z" fill="url(#grad4)" stroke="#d07860" stroke-width="1.5" class="map-region" data-region="legs" data-atlas="veins"/>
+      <path id="reg-heart" d="M360,200 Q400,180 440,200 Q460,240 440,260 Q400,280 360,260 Q340,240 360,200Z" fill="url(#grad5)" stroke="#e8d4a0" stroke-width="2" class="map-region" data-region="heart" data-atlas="rift"/>
+      <path id="reg-border" d="M50,250 Q200,100 400,80 Q600,100 750,250 Q600,400 400,420 Q200,400 50,250Z" fill="none" stroke="#322a34" stroke-width="2" stroke-dasharray="8,4"/>
+
+      <!-- Labels -->
+      <text x="400" y="100" text-anchor="middle" fill="#d4af6a" font-size="16" font-family="var(--font-display)" style="pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.8)">Черепная чаша</text>
+      <text x="400" y="240" text-anchor="middle" fill="#7a90b8" font-size="16" font-family="var(--font-display)" style="pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.8)">Туловище</text>
+      <text x="190" y="240" text-anchor="middle" fill="#8aa060" font-size="14" font-family="var(--font-display)" style="pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.8)">Руки</text>
+      <text x="610" y="240" text-anchor="middle" fill="#8aa060" font-size="14" font-family="var(--font-display)" style="pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.8)">Руки</text>
+      <text x="400" y="420" text-anchor="middle" fill="#d07860" font-size="16" font-family="var(--font-display)" style="pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.8)">Ноги</text>
+      <text x="400" y="245" text-anchor="middle" fill="#e8d4a0" font-size="12" font-family="var(--font-ui)" style="pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.8)">Сердце мира</text>
+
+      <!-- Cities/Marks -->
+      <circle cx="400" cy="120" r="4" fill="#d4af6a" filter="url(#glow)"/><text x="410" y="124" fill="#978a94" font-size="10" style="pointer-events:none">Бельм</text>
+      <circle cx="350" cy="220" r="4" fill="#7a90b8" filter="url(#glow)"/><text x="330" y="215" fill="#978a94" font-size="10" style="pointer-events:none">Край</text>
+      <circle cx="450" cy="220" r="4" fill="#7a90b8" filter="url(#glow)"/><text x="460" y="215" fill="#978a94" font-size="10" style="pointer-events:none">Лирас</text>
+      <circle cx="400" cy="380" r="4" fill="#d07860" filter="url(#glow)"/><text x="410" y="384" fill="#978a94" font-size="10" style="pointer-events:none">Таль</text>
+    </svg>
+  </div>
+
+  <div id="map-info" class="map-card">
+    <h3>Наведите на область</h3>
+    <p style="color:var(--muted)">Кликните по региону, чтобы открыть полный атлас с деталями: народы, города, климат, опасности.</p>
+  </div>
+
+  <div class="map-nav">
+    <a href="#start" onclick="showView('start');return false">
+      <span>Назад</span>
+      <strong>Главная</strong>
+    </a>
+    <a href="#chelo" onclick="showView('chelo');return false" style="border-color:rgba(212,175,106,.4)">
+      <span>Подробнее</span>
+      <strong>Атлас мира</strong>
+    </a>
+    <a href="#timeline" onclick="showView('timeline');return false">
+      <span>Дальше</span>
+      <strong>Таймлайн</strong>
+    </a>
+  </div>
+</div>
+
+<script>
+const MAPDATA = {
+  cranium:{name:'Черепная чаша',nal:'30–60%',clans:'Культ Второго Погребения, Отцы Праха',mobs:'Эхо из Бельма, Забытый страж',loot:'Реликвии, тома Познания',atlas:'lik'},
+  torso:{name:'Туловище',nal:'50–80%',clans:'Пепельные купцы, Безмолвные',mobs:'Прахопад, Скиталец',loot:'Прах, модули, оружие',atlas:'spine'},
+  arms:{name:'Руки',nal:'20–40%',clans:'Изолированные общины',mobs:'Дикие эхо, Костопряды',loot:'Ресурсы, редкие минералы',atlas:'mines'},
+  legs:{name:'Ноги',nal:'10–30%',clans:'Кочевники Таль, Отступники',mobs:'Глубинные твари, Разломные порождения',loot:'Артефакты эпохи Вторжения',atlas:'veins'},
+  heart:{name:'Сердце мира',nal:'90–100%',clans:'Жрецы Молчания',mobs:'???',loot:'Божественные осколки',atlas:'rift'}
+};
+document.querySelectorAll('.map-region').forEach(r=>{
+  r.addEventListener('mouseenter',()=>{
+    const d=MAPDATA[r.dataset.region];
+    if(!d) return;
+    document.getElementById('map-info').innerHTML = '<h3>'+d.name+'</h3>'+
+      '<p><b>Наложение:</b> '+d.nal+'</p>'+
+      '<p><b>Кланы:</b> '+d.clans+'</p>'+
+      '<p><b>Монстры:</b> '+d.mobs+'</p>'+
+      '<p><b>Добыча:</b> '+d.loot+'</p>'+
+      '<p style="color:var(--accent);margin-top:10px;font:13px var(--font-ui)">Кликните, чтобы открыть полный атлас →</p>';
+  });
+  r.addEventListener('click',()=>{
+    const d=MAPDATA[r.dataset.region];
+    if(!d) return;
+    window._atlasRegion = d.atlas;
+    showView('chelo');
+  });
+});
+</script>
+</section>
+<section class="view" id="v-timeline" data-view="timeline" hidden>
+<header class="vhead"><p class="eyebrow">Хроники мира</p><h1>Таймлайн восьми эпох</h1></header>
+<div class="tl-wrap">
+  <div class="tl-line"></div>
+  <div class="tl-items">
+    <div class="tl-item" onclick="showEpoch('epoch0')">
+      <div class="tl-dot" style="background:#d4af6a"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха I</div>
+        <h3>Нулевая эпоха</h3>
+        <p>Бог ещё жив. Мир цел, люди не знают Праха. Начало всего.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch1')">
+      <div class="tl-dot" style="background:#7a90b8"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха II</div>
+        <h3>Эпоха Смерти</h3>
+        <p>Бог умирает. Тело становится миром. Первые Прахопады.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch2')">
+      <div class="tl-dot" style="background:#8aa060"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха III</div>
+        <h3>Эпоха Пепла</h3>
+        <p>Выжившие объединяются в кланы. Рождение первых Возвышенных.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch3')">
+      <div class="tl-dot" style="background:#d07860"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха IV</div>
+        <h3>Эпоха Вторжения</h3>
+        <p>Чужаки извне пытаются colonize Тело Бога. Великие войны.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch4')">
+      <div class="tl-dot" style="background:#c898ac"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха V</div>
+        <h3>Эпоха Молчания</h3>
+        <p>Жрецы устанавливают табу. Магия уходит в подполье.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch5')">
+      <div class="tl-dot" style="background:#a89098"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха VI</div>
+        <h3>Эпоха Торговли</h3>
+        <p>Пепельные купцы связывают регионы. Расцвет городов.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch6')">
+      <div class="tl-dot" style="background:#e8d4a0"></div>
+      <div class="tl-card">
+        <div class="tl-era">Эпоха VII</div>
+        <h3>Эпоха Познания</h3>
+        <p>Тома и руины. Искатели истины копаются в теле Бога.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="showEpoch('epoch7')">
+      <div class="tl-dot" style="background:#fff;box-shadow:0 0 12px #d4af6a"></div>
+      <div class="tl-card" style="border-color:var(--accent)">
+        <div class="tl-era" style="color:var(--accent)">Эпоха VIII</div>
+        <h3>Эпоха Трещин</h3>
+        <p>Настоящее. Трещины расширяются. Герои — последняя надежда.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="epoch-detail" style="max-width:700px;margin:24px auto;padding:0 18px" hidden></div>
+
+<style>
+.tl-wrap{position:relative;max-width:700px;margin:0 auto;padding-left:30px}
+.tl-line{position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent),transparent)}
+.tl-item{position:relative;margin-bottom:20px;cursor:pointer;transition:transform .15s}
+.tl-item:hover{transform:translateX(4px)}
+.tl-item:hover .tl-card{border-color:rgba(212,175,106,.5)}
+.tl-dot{position:absolute;left:-26px;top:6px;width:14px;height:14px;border-radius:50%;border:2px solid var(--line);transition:.2s}
+.tl-item:hover .tl-dot{transform:scale(1.2)}
+.tl-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;transition:.15s}
+.tl-era{font:11px var(--font-ui);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tl-card h3{margin:0 0 6px;font:20px var(--font-display);color:var(--fg)}
+.tl-card p{margin:0;font:14px var(--font-body);color:var(--muted);line-height:1.5}
+.epoch-detail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;animation:fadeIn .35s ease}
+.epoch-detail h2{font:28px var(--font-display);color:#b8a06a;margin:0 0 12px}
+.epoch-detail h3{font:16px var(--font-display);color:#9a7a8a;margin:18px 0 6px}
+.epoch-detail p{font:15px var(--font-body);color:var(--fg);line-height:1.65;margin:0 0 10px}
+.epoch-detail .back{display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--fg);padding:8px 18px;border-radius:6px;cursor:pointer;font:13px var(--font-ui);margin-bottom:16px;transition:.15s}
+.epoch-detail .back:hover{border-color:#b8a06a;color:#b8a06a}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+
+<script>
+(function(){
+  const EPOCHS = {
+    epoch0: {
+      title: "Нулевая эпоха",
+      era: "Эпоха I",
+      years: "? — Неизвестно",
+      desc: "Время, когда Бог ещё был жив. Мир существовал в его объятиях, люди не знали ни Праха, ни Возвышений, ни Швов. Это время легенд, о которых остались лишь фрагменты в устных преданиях золян.",
+      events: [
+        "Бог существует в единстве с миром. Нет разделения между божественным и земным.",
+        "Первые люди появляются неизвестно как — возможно, из снов Бога.",
+        "Нет магии в современном понимании — есть только благодать.",
+        "Нет смерти в привычном смысле — уходящие просто возвращаются к Богу."
+      ],
+      legacy: "Всё, что осталось от этой эпохи — мифы и руины, которые невозможно датировать. Некоторые жрецы утверждают, что Швы — это раны от падения."
+    },
+    epoch1: {
+      title: "Эпоха Смерти",
+      era: "Эпоха II", 
+      years: "~5000 лет назад",
+      desc: "Бог умирает. Его тело становится миром — Чело. Первая Прахопад — катастрофа, которая изменила всё. Небо потемнело, земля раскололась, и то, что было благодатью, стало Прахом.",
+      events: [
+        "Смерть Бога. Никто не знает, почему и как. Три версии существуют до сих пор.",
+        "Первая Прахопад — волна смертельной энергии накрывает мир.",
+        "90% населения погибает. Выжившие прячутся в пещерах и глубоких долинах.",
+        "Появляются первые Швы — трещины в реальности.",
+        "Небо меняет цвет. Звёзды становятся холодными."
+      ],
+      legacy: "Прахопады стали частью мира. Теперь каждые несколько столетий мир содрогается от новой волны. Первая Прахопад — эталон катастрофы."
+    },
+    epoch2: {
+      title: "Эпоха Пепла",
+      era: "Эпоха III",
+      years: "~4500 — 3500 лет назад",
+      desc: "Выжившие объединяются в кланы. Рождение первых Возвышенных — тех, кто сумел взять власть над Прахом, а не погибнуть от него. Формируются первые общины и устные законы.",
+      events: [
+        "Объединение кланов. Угары, бельмари, костари — первые народы.",
+        "Открытие Возвышений. Первые герои понимают, что Прах можно использовать.",
+        "Первые храмы. Поклонение мёртвому Богу как источнику жизни и смерти.",
+        "Появление первых Спиритов — душ, застрявших между мирами.",
+        "Костари начинают строить города из кости Бога."
+      ],
+      legacy: "Клановая система сохраняется до сих пор. Первые Возвышенные стали легендами, имена которых произносят шёпотом."
+    },
+    epoch3: {
+      title: "Эпоха Вторжения",
+      era: "Эпоха IV",
+      years: "~3500 — 2500 лет назад",
+      desc: "Чужаки извне пытаются колонизировать Тело Бога. Великие войны, которые определили границы мира. Первые рукотворные создаются как оружие.",
+      events: [
+        "Открытие Швов как врат. Через них приходят существа из других миров.",
+        "Великие войны. Народы Чело объединяются против общего врага.",
+        "Создание первых рукотворных — искусственных защитников.",
+        "Падение Первой Империи. Ни одна держава не устояла.",
+        "Появление первых Люмаров — духов, наделивших людей силой."
+      ],
+      legacy: "Границы мира установлены в этой эпохе. Рукотворные до сих пор бродят по Чело, забыв своё предназначение."
+    },
+    epoch4: {
+      title: "Эпоха Молчания",
+      era: "Эпоха V",
+      years: "~2500 — 1500 лет назад",
+      desc: "Жрецы устанавливают табу. Магия уходит в подполье. Эпоха страха перед Прахом, когда любое использование силы считалось ересью. Гонения на Возвышенных.",
+      events: [
+        "Совет Жрецов запрещает открытое использование Праха.",
+        "Охота на Возвышенных. Те, кто не скрылся, сожжены.",
+        "Магия уходит в подполье. Тайные кружки и ночные собрания.",
+        "Утрата знаний. Многие тома сожжены как еретические.",
+        "Появление первых Пепельных купцов — контрабандистов эссенции."
+      ],
+      legacy: "Табу сломлено, но страх остался. Некоторые регионы до сих пор подозрительно относятся к магии."
+    },
+    epoch5: {
+      title: "Эпоха Торговли",
+      era: "Эпоха VI",
+      years: "~1500 — 700 лет назад",
+      desc: "Пепельные купцы связывают регионы. Расцвет городов. Эпоха открытости, когда дороги стали безопаснее, а информация — ценнее золота. Формируются современные государства.",
+      events: [
+        "Расцвет торговли. Пепельные купцы связывают все регионы Чело.",
+        "Строительство дорог. Первые безопасные пути между городами.",
+        "Возрождение магии. Табу ослабевает, открываются академии.",
+        "Расцвет городов. Норгард, Стан, Пристань — современные столицы.",
+        "Появление письменности. Устные предания записываются в тома."
+      ],
+      legacy: "Современная цивилизация Чело выросла из этой эпохи. Большинство городов и дорог построены тогда."
+    },
+    epoch6: {
+      title: "Эпоха Познания",
+      era: "Эпоха VII",
+      years: "~700 — 100 лет назад",
+      desc: "Тома и руины. Искатели истины копаются в теле Бога. Эпоха исследований, когда учёные и авантюристы пытались понять, что же на самом деле произошло.",
+      events: [
+        "Основание Академии Пепла. Первое учебное заведение для Возвышенных.",
+        "Раскопки древних руин. Открытие технологий Первого Тепла.",
+        "Карта Швов. Первые попытки систематизировать трещины в реальности.",
+        "Контакт с внешними мирам. Установление дипломатии через Швы.",
+        "Теории смерти Бога. Три основные версии оформляются как доктрины."
+      ],
+      legacy: "Академия Пепла существует до сих пор. Многие руины до сих пор не исследованы — слишком опасны."
+    },
+    epoch7: {
+      title: "Эпоха Трещин",
+      era: "Эпоха VIII",
+      years: "Настоящее",
+      desc: "Трещины расширяются. Швы становятся шире и нестабильнее. Прахопады участились. Герои — последняя надежда мира, который, кажется, готовится к финальному расколу.",
+      events: [
+        "Швы расширяются. Нестабильные зоны растут с каждым годом.",
+        "Участившиеся Прахопады. Катастрофы случаются чаще, чем когда-либо.",
+        "Рост числа Спиритов. Души застревают между мирами массово.",
+        "Политические напряжения. Государства готовятся к войне за ресурсы.",
+        "Появление новых героев. Возвышенные становятся последней надеждой."
+      ],
+      legacy: "Это время, в котором живут персонажи. Никто не знает, чем закончится эта эпоха — возможно, концом мира, возможно — его перерождением."
+    }
+  };
+
+  window.showEpoch = function(id) {
+    const e = EPOCHS[id];
+    if (!e) return;
+    const box = document.getElementById('epoch-detail');
+    let h = '<div class="epoch-detail">';
+    h += '<button class="back" onclick="closeEpoch()">← Назад к таймлайну</button>';
+    h += '<div class="tl-era">' + esc(e.era) + '</div>';
+    h += '<h2>' + esc(e.title) + '</h2>';
+    h += '<p style="color:var(--muted);font:14px var(--font-ui);margin:-6px 0 14px">' + esc(e.years) + '</p>';
+    h += '<p>' + esc(e.desc) + '</p>';
+    h += '<h3>Ключевые события</h3>';
+    h += '<ul style="padding-left:18px;font:15px var(--font-body);color:var(--fg);line-height:1.65">';
+    e.events.forEach(ev => { h += '<li style="margin-bottom:8px">' + esc(ev) + '</li>'; });
+    h += '</ul>';
+    h += '<h3>Наследие</h3>';
+    h += '<p>' + esc(e.legacy) + '</p>';
+    h += '</div>';
+    box.innerHTML = h;
+    box.hidden = false;
+    box.scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  window.closeEpoch = function() {
+    document.getElementById('epoch-detail').hidden = true;
+    document.querySelector('.tl-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+})();
+</script>
+</section>
+
+<section class="view" id="v-chelo" data-view="chelo" hidden>
+<header class="vhead" style="background:linear-gradient(180deg,rgba(11,10,13,.6) 0%,rgba(11,10,13,.95) 100%);padding:0">
+  <div style="position:relative;width:100%;overflow:hidden;max-height:500px">
+    <img src="images/atlas_skull.jpg" alt="Череп Мёртвого Бога" style="width:100%;height:auto;display:block">
+    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(11,10,13,.95) 0%,rgba(11,10,13,0) 100%);padding:80px 18px 28px">
+      <p class="eyebrow">Атлас мира</p>
+      <h1 style="font-size:clamp(42px,7vw,68px);margin:0 0 8px">Атлас</h1>
+      <p style="max-width:700px;color:var(--fg);font:16px var(--font-body);margin:0">Наведите курсор на регион тела Бога, чтобы узнать его название. Нажмите, чтобы открыть полную информацию.</p>
+    </div>
+  </div>
+</header>
+
+<style>
+.atlas-wrap{max-width:1100px;margin:auto;padding:18px}
+.atlas-map-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface);margin:16px 0}
+.atlas-svg{width:100%;height:auto;display:block}
+.atlas-region{fill:rgba(184,160,106,.06);stroke:rgba(154,122,138,.4);stroke-width:2;cursor:pointer;transition:all .25s}
+.atlas-region:hover{fill:rgba(184,160,106,.2);stroke:rgba(184,160,106,.8);stroke-width:3}
+.atlas-region.active{fill:rgba(154,122,138,.25);stroke:#b8a06a;stroke-width:3}
+.atlas-tooltip{position:fixed;pointer-events:none;background:rgba(11,10,13,.93);border:1px solid #b8a06a;color:#b8a06a;padding:6px 14px;border-radius:6px;font:13px var(--font-ui);opacity:0;transition:opacity .15s;z-index:100;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+.atlas-tooltip.show{opacity:1}
+.atlas-detail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;margin:16px 0;animation:fadeIn .35s ease}
+.atlas-detail h2{font:30px var(--font-display);color:#b8a06a;margin:0 0 12px}
+.atlas-detail h3{font:18px var(--font-display);color:#9a7a8a;margin:22px 0 8px}
+.atlas-detail p{font:15px var(--font-body);color:var(--fg);line-height:1.65;margin:0 0 10px}
+.atlas-detail ul{font:15px var(--font-body);color:var(--fg);line-height:1.65;margin:0 0 10px;padding-left:20px}
+.atlas-detail li{margin-bottom:6px}
+.atlas-detail .back{display:inline-block;background:var(--surface2);border:1px solid var(--line);color:var(--fg);padding:8px 18px;border-radius:6px;cursor:pointer;font:13px var(--font-ui);margin-bottom:18px;transition:.15s}
+.atlas-detail .back:hover{border-color:#b8a06a;color:#b8a06a}
+.atlas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+.atlas-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px}
+.atlas-card h4{font:14px var(--font-ui);color:#b8a06a;margin:0 0 6px;text-transform:uppercase;letter-spacing:.08em}
+.atlas-card p{font:14px var(--font-body);color:var(--fg);margin:0;line-height:1.55}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+
+<div class="atlas-wrap">
+  <div class="atlas-map-wrap" id="atlas-map-wrap">
+    <svg viewBox="0 0 1400 933" class="atlas-svg" id="atlas-svg" preserveAspectRatio="xMidYMid slice">
+      <image href="images/atlas_skull.jpg" width="1400" height="933" preserveAspectRatio="xMidYMid slice"/>
+
+      <!-- Верхний Лик — лоб черепа -->
+      <path id="reg-lik" class="atlas-region" data-region="lik" 
+        d="M 520,50 Q 700,20 880,50 Q 950,120 920,220 Q 850,260 700,240 Q 550,260 480,220 Q 450,120 520,50 Z"/>
+
+      <!-- Западное Око — левая глазница -->
+      <path id="reg-westeye" class="atlas-region" data-region="westeye"
+        d="M 540,260 Q 640,230 700,280 Q 720,360 660,400 Q 560,380 520,320 Q 500,280 540,260 Z"/>
+
+      <!-- Восточное Око — правая глазница -->
+      <path id="reg-easteye" class="atlas-region" data-region="easteye"
+        d="M 700,280 Q 760,230 860,260 Q 900,280 880,320 Q 840,380 740,400 Q 680,360 700,280 Z"/>
+
+      <!-- Становая Гряда — переносье/нос -->
+      <path id="reg-spine" class="atlas-region" data-region="spine"
+        d="M 620,400 Q 700,380 780,400 Q 820,460 780,540 Q 700,560 620,540 Q 580,460 620,400 Z"/>
+
+      <!-- Нижние Копи — нижняя челюсть/зубы слева -->
+      <path id="reg-mines" class="atlas-region" data-region="mines"
+        d="M 420,500 Q 520,480 580,540 Q 560,640 480,720 Q 380,680 360,600 Q 350,540 420,500 Z"/>
+
+      <!-- Выдох — рот/горло -->
+      <path id="reg-breath" class="atlas-region" data-region="breath"
+        d="M 580,560 Q 700,540 820,560 Q 880,640 840,740 Q 700,780 560,740 Q 520,640 580,560 Z"/>
+
+      <!-- Жилы — шея/нижняя часть -->
+      <path id="reg-veins" class="atlas-region" data-region="veins"
+        d="M 480,720 Q 700,700 920,720 Q 1000,800 940,900 Q 700,930 460,900 Q 400,800 480,720 Z"/>
+
+      <!-- Зубчатое Окружье — правый бок/висок -->
+      <path id="reg-teeth" class="atlas-region" data-region="teeth"
+        d="M 920,220 Q 1020,200 1080,280 Q 1100,380 1040,460 Q 940,420 900,340 Q 880,280 920,220 Z"/>
+
+      <!-- Разлом — центральная трещина -->
+      <path id="reg-rift" class="atlas-region" data-region="rift"
+        d="M 660,420 Q 700,400 740,420 Q 760,500 720,580 Q 680,600 640,540 Q 620,480 660,420 Z"/>
+    </svg>
+    <div id="atlas-tooltip" class="atlas-tooltip"></div>
+  </div>
+
+  <div id="atlas-detail"></div>
+</div>
+
+<script>
+(function(){
+  const REGIONS = {
+    lik: {
+      name: "Верхний Лик",
+      subtitle: "Лоб Мёртвого Бога — северные земли",
+      desc: "Холодные берега, старые крепости и первые людские поселения. Здесь климат суровый, земля каменистая, а моря бурные. Лоб Бога стал северным континентом, где кости пробиваются сквозь тонкую кожу мха и лишайников.",
+      climate: "Тундра и тайга на севере, хвойные леса к югу. Долгие зимы, короткое лето. Постоянный ветер с Оков.",
+      cities: ["Норгард — столица Севера, город-крепость на утёсе. Стены высечены из кости Бога.", "Белый Мыс — портовый город, ворота в Зубчатое Окружье. Здесь швартуются киты-облака."],
+      peoples: ["Угары — Дети Горна. Кожа цвета остывающего угля, тускло рдеет в темноте. Живут в пещерах и крепостях.", "Северные бельмари — рыбаки и охотники, поклоняются Ноэме."],
+      faiths: ["Эйлис Несгоревшая — Люмар Надежды. Завет: «Не гаси чужой огонь». Храмы — это очаги, которые никогда не гасят."],
+      resources: "Железо, уголь, китовий жир, меха, костяное серебро.",
+      dangers: "Морозные бури, племенные распри, древние руины Первого Тепла, Швы на северных границах."
+    },
+    westeye: {
+      name: "Западное Око",
+      subtitle: "Левая глазница Бога — море туманов",
+      desc: "Гигантская впадина, заполненная тёмной водой и туманами. Считается, что здесь Бог видел сны — и его сны до сих пор бродят по воде в виде миражей и ложных островов.",
+      climate: "Влажный, туманный. Постоянная дымка над водой. Солнце редко пробивается сквозь завесу.",
+      cities: ["Туманная Пристань — город на сваях, рыбаки и собиратели жемчуга. Дома строят из выброшенных костей.", "Порт Невидимок — притон контрабандистов и искателей."],
+      peoples: ["Жильцы — Дети Жил. Смуглые, с заметными венами на коже, торговцы и лодочники. Лучшие мореходы Чело."],
+      faiths: ["Ноэма — Туамар Суда и памяти. Завет: «Не суди дважды». Жрецы хранят устные предания племён."],
+      resources: "Рыба, жемчуг, редкие водоросли, торговые пути, мираж-шёлк.",
+      dangers: "Туманные чудовища, затонувшие руины, пиратские шхуны, сны Бога искажают реальность."
+    },
+    easteye: {
+      name: "Восточное Око",
+      subtitle: "Правая глазница — чёрная чаша",
+      desc: "Вторая глазная впадина — более глубокая и тихая. Её воды чёрные, а дно усеяно обломками того, что Бог видел в последние мгновения. Здесь молчание давит на уши.",
+      climate: "Тёплый, влажный. Тропические заросли по берегам. Но вода остаётся ледяной.",
+      cities: ["Глубинный Сад — город на террасах, садоводы и алхимики. Выращивают растения на воде.", "Последний Взгляд — монастырь на краю впадины, где аскеты медитируют над чёрной водой."],
+      peoples: ["Жильцы — восточные кланы, выращивают водные культуры. Их глаза приобретают фиолетовый оттенок от водорослей."],
+      faiths: ["Ворх Довершитель — Тенемар Завершения. Завет: «Не оставляй незавершённого». Здесь завершают жизни Спиритов."],
+      resources: "Редкие травы, красители, обломки с глубины, жемчуг, соль.",
+      dangers: "Глубинные твари, отравленные водоросли, обломки наносят урон судам, депрессия от молчания."
+    },
+    spine: {
+      name: "Становая Гряда",
+      subtitle: "Носовая кость — центральный хребет мира",
+      desc: "Центральный хребет, проходящий через всю планету. Высокие горы, крепости и древние дороги. Здесь кость Бога ближе всего к поверхности — можно увидеть, как белые склоны проступают сквозь землю.",
+      climate: "Горный — резкие перепады, снега на высоте, тёплые долины. Воздух разрежен и прозрачен.",
+      cities: ["Стан — столица Гряды, город-крепость у подножия. Построен на носовой кости Бога.", "Высокий Путь — торговый город на перевале. Контролирует все пути между севером и югом."],
+      peoples: ["Костари — Дети Становой Гряды. Высокие и костистые, носят кость предка как амулет. Живут в гармонии с костью."],
+      faiths: ["Эйлис и Ворх — оба имеют храмы в разных частях Гряды. Костари считают, что надежда и завершение — две стороны одной монеты."],
+      resources: "Камень, металлы, древние дороги, стратегическое положение, костяной мрамор.",
+      dangers: "Лавины, горные разбойники, древние механизмы Первого Тепла, Швы в глубоких пещерах."
+    },
+    mines: {
+      name: "Нижние Копи",
+      subtitle: "Нижняя челюсть — рудный край",
+      desc: "Рудный край, где добывают металлы и камни из челюсти Бога. Город Копь — центр металлургии. Здесь зубы Бога превратились в рудные жилы, а дёсны — в плавильни.",
+      climate: "Сухой, пыльный. Дым от плавилен закрывает небо. Пепел оседает на язык.",
+      cities: ["Копь — столица рудников, город плавильщиков и кузнецов. Дома выстроены в зубных альвеолах.", "Плавильный Рот — промышленный район, где плавят руду в вечных огнях."],
+      peoples: ["Угары — шахтёры и плавильщики. Их кожа цвета остывающего угля светится в темноте шахт."],
+      faiths: ["Ворх Довершитель — кузнецы молятся перед началом работы, чтобы не оставить дело незавершённым."],
+      resources: "Железо, медь, олово, Костяное серебро, Прах, древние сплавы.",
+      dangers: "Обвалы, ядовитые газы, рукотворные убежавшие, пожары, прорыв Швов в глубоких выработках."
+    },
+    breath: {
+      name: "Выдох",
+      subtitle: "Рот и горло — пепельная степь",
+      desc: "Пепельная степь, где когда-то дышал Бог. Теперь здесь пепел, зола и серые кочевники. Последний выдох Бога застыл в виде пепельных вихрей, бродящих по равнинам.",
+      climate: "Сухой, ветреный. Пепельные бури, перепады температур. Днём жарко, ночью морозно.",
+      cities: ["Зола — кочевой город-шатёр, центр золян. Перемещается за стадами пепельных яков.", "Пепельный Брег — порт на границе с Жилами. Торговля между степью и речными землями."],
+      peoples: ["Золяне — Дети Выдоха. Серые кочевники, передают память устно. Их волосы цвета пепла, глаза — цвета угольной пыли."],
+      faiths: ["Ноэма — хранители памяти в мире без письменности. Золяне не верят в книги — только в рассказы у костра."],
+      resources: "Пепел (удобрение, краска, лекарство), соляные озёра, кожи, шерсть, пепельная соль.",
+      dangers: "Пепельные бури, кочевые набеги, выжженная земля, вихри-призраки последнего выдоха."
+    },
+    veins: {
+      name: "Жилы",
+      subtitle: "Шея и сосуды — речная система",
+      desc: "Речная система, плодородные долины и торговые пути. Сердце торговли и земледелия. Артерии Бога стали реками, а вены — каналами. Вода здесь имеет слегка золотистый оттенок от остаточной эссенции.",
+      climate: "Умеренный, влажный. Мягкие зимы, тёплое лето. Частые туманы над водой.",
+      cities: ["Пристань — торговая столица, город на речных распутьях. Здесь сходятся все торговые пути Чело.", "Речной Базар — плавучий город-рынок. Корабли-лавки причаливают к берегу каждый день."],
+      peoples: ["Жильцы — Дети Жил. Смуглые, с заметными венами на коже, торговцы и лодочники. Лучшие переговорщики."],
+      faiths: ["Все три силы имеют здесь последователей. Жильцы прагматичны — верят в то, что приносит пользу."],
+      resources: "Зерно, рыба, речной жемчуг, торговля между всеми регионами, эссенция-вода.",
+      dangers: "Наводнения, речные пираты, болотные лихорадки, Швы иногда открываются в руслах рек."
+    },
+    teeth: {
+      name: "Зубчатое Окружье",
+      subtitle: "Височные кости — острова-зубы",
+      desc: "Острова-зубы на востоке. Проливы, шторма и изолированные общины. Зубы Бога торчат из воды как гигантские башни, а между ними — бурные проливы.",
+      climate: "Морской, влажный. Частые шторма, туманы. Ветер свистит в зубных щелях.",
+      cities: ["Остов — город на самом большом острове-зубе, центр кораблестроения. Доки высечены в эмали.", "Проливная — город на мостах между двумя зубами. Мосты раскачиваются при шторме."],
+      peoples: ["Морские бельмари — рыбаки и мореходы. Их глаза привыкли к туману, они видят то, что другие не замечают."],
+      faiths: ["Эйлис — маяки и огни надежды. Каждый зуб имеет свой маяк, зажжённый в честь Несгоревшей."],
+      resources: "Рыба, кораллы, корабли, морские пути, эмаль-перламутр, зубная кость.",
+      dangers: "Шторма, морские чудовища, изоляция, остатки древних защитных систем, рифы из осколков зубов."
+    },
+    rift: {
+      name: "Разлом",
+      subtitle: "Центральная трещина — нестабильные Швы",
+      desc: "Область нестабильных Швов — место, где реальность тонка. Центральная трещина черепа Бога стала вратами между мирами. Здесь появляются Спириты и рукотворные.",
+      climate: "Нестабильный. Может меняться в радиусе километра. В одном месте снег, в другом — жара.",
+      cities: ["Шовный Город — город на границе, живущий за счёт Швов. Здесь торгуют эссенцией и осколками.", "Сквозняк — передовая крепость, где сдерживают выходящих из Швов существ."],
+      peoples: ["Стежники — Дети Швов. В сумерках полупрозрачны, видят Спиритов. Живут на границе миров."],
+      faiths: ["Ворх — здесь чаще всего завершают жизнь Спиритов. Завет «Не оставляй незавершённого» приобретает особый смысл."],
+      resources: "Осколки Мёртвого Бога, эссенция, редкие материалы из Швов, знания из других миров.",
+      dangers: "Швы, Спириты, рукотворные, реальность может искажаться, временные петли, пространственные разломы. Зона повышенной опасности."
+    }
+  };
+
+  const svg = document.getElementById('atlas-svg');
+  const tooltip = document.getElementById('atlas-tooltip');
+  const detail = document.getElementById('atlas-detail');
+  const regions = svg.querySelectorAll('.atlas-region');
+
+  regions.forEach(r => {
+    r.addEventListener('mouseenter', e => {
+      const key = r.dataset.region;
+      const info = REGIONS[key];
+      if (!info) return;
+      tooltip.textContent = info.name;
+      tooltip.classList.add('show');
+    });
+    r.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY + 10) + 'px';
+    });
+    r.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+
+    r.addEventListener('click', () => {
+      const key = r.dataset.region;
+      const info = REGIONS[key];
+      if (!info) return;
+
+      regions.forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+
+      let h = '<button class="back" onclick="backToMap()">← Назад к карте мира</button>';
+      h += '<h2>' + esc(info.name) + '</h2>';
+      h += '<p style="color:var(--muted);font:15px var(--font-body);margin:-8px 0 16px">' + esc(info.subtitle) + '</p>';
+      h += '<p>' + esc(info.desc) + '</p>';
+
+      h += '<div class="atlas-grid">';
+      h += '<div class="atlas-card"><h4>Климат</h4><p>' + esc(info.climate) + '</p></div>';
+      h += '<div class="atlas-card"><h4>Ресурсы</h4><p>' + esc(info.resources) + '</p></div>';
+      h += '<div class="atlas-card"><h4>Опасности</h4><p>' + esc(info.dangers) + '</p></div>';
+      if (info.cities && info.cities.length) {
+        h += '<div class="atlas-card"><h4>Города</h4><p>' + info.cities.map(c => '• ' + esc(c)).join('<br>') + '</p></div>';
+      }
+      if (info.peoples && info.peoples.length) {
+        h += '<div class="atlas-card"><h4>Народы</h4><p>' + info.peoples.map(p => '• ' + esc(p)).join('<br>') + '</p></div>';
+      }
+      if (info.faiths && info.faiths.length) {
+        h += '<div class="atlas-card"><h4>Веры</h4><p>' + info.faiths.map(f => '• ' + esc(f)).join('<br>') + '</p></div>';
+      }
+      h += '</div>';
+
+      detail.innerHTML = h;
+      detail.hidden = false;
+      detail.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  window.closeAtlasDetail = function() {
+    detail.hidden = true;
+    regions.forEach(x => x.classList.remove('active'));
+    document.getElementById('atlas-map-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  window.backToMap = function() {
+    showView('karta');
+  };
+
+  // Auto-open region if coming from map
+  setTimeout(() => {
+    if (window._atlasRegion) {
+      const r = svg.querySelector('.atlas-region[data-region="' + window._atlasRegion + '"]');
+      if (r) {
+        r.dispatchEvent(new Event('click'));
+        window._atlasRegion = null;
+      }
+    }
+  }, 100);
+
+  window.backToMap = function() {
+    showView('karta');
+  };
+
+  // Auto-open region if coming from map
+  setTimeout(() => {
+    if (window._atlasRegion) {
+      const r = svg.querySelector('.atlas-region[data-region="' + window._atlasRegion + '"]');
+      if (r) {
+        r.dispatchEvent(new Event('click'));
+        window._atlasRegion = null;
+      }
+    }
+  }, 100);
+
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+})();
+</script>
+</section>
 </main>
 </div>
 <button class="toTop" id="toTop" aria-label="Наверх"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10l5-5 5 5"/></svg></button>
@@ -7288,7 +7931,7 @@ const TILES = {
   "timeline":["Таймлайн","Восемь эпох мира от Нулевой до Эпохи Трещин. Кликайте для деталей."],
   "chelo":["Атлас мира","Детали регионов: народы, города, климат, веры, опасности."]
 };
-const EXTRA = {konstruktor:{title:"Конструктор героя",eyebrow:"Инструмент"},karty:{title:"Каталог карт",eyebrow:"Карты"},snaryazhenie:{title:"Снаряжение",eyebrow:"Каталог"},bestiariy:{title:"Бестиарий",eyebrow:"Каталог"},dary:{title:"Дары",eyebrow:"Каталог"},spravka:{title:"Шпаргалка",eyebrow:"Под рукой"},"list-geroya":{title:"Лист героя",eyebrow:"Инструмент"},"snaryazhenie-full":{title:"Снаряжение",eyebrow:"Справочник"},"kalkulyator":{title:"Калькулятор",eyebrow:"Инструмент"},"generator":{title:"Генератор",eyebrow:"Инструмент"},"karta":{title:"Карта мира",eyebrow:"Мир"},"timeline":{title:"Таймлайн",eyebrow:"Хроники"},"chelo":{title:"Атлас мира",eyebrow:"Детали"}};
+const EXTRA = {konstruktor:{title:"Конструктор героя",eyebrow:"Инструмент"},karty:null,snaryazhenie:{title:"Снаряжение",eyebrow:"Каталог"},bestiariy:{title:"Бестиарий",eyebrow:"Каталог"},dary:{title:"Дары",eyebrow:"Каталог"},spravka:{title:"Шпаргалка",eyebrow:"Под рукой"},"list-geroya":{title:"Лист героя",eyebrow:"Инструмент"},"snaryazhenie-full":{title:"Снаряжение",eyebrow:"Справочник"},"kalkulyator":{title:"Калькулятор",eyebrow:"Инструмент"},"generator":{title:"Генератор",eyebrow:"Инструмент"},"karta":{title:"Карта мира",eyebrow:"Мир"},"timeline":{title:"Таймлайн",eyebrow:"Хроники"},"chelo":{title:"Атлас мира",eyebrow:"Детали"}};
 const GROUPS = [["Начать игру",["konstruktor","list-geroya","spravka"]],["Книга правил",["mir","geroi","pravila","masterskaya","hroniki"]],["Справочники",["karty","snaryazhenie","bestiariy","dary","snaryazhenie-full"]],["Мир",["karta","timeline","chelo"]],["Инструменты",["kalkulyator","generator"]],["Приложения",["prilozheniya"]]];
 const ORDER = [{id:"start",title:"Начало",eyebrow:"Обложка",chapters:[],group:""}];
 GROUPS.forEach(([g,ids])=>ids.forEach(id=>{ const n=NAV.find(x=>x.id===id) || Object.assign({id,chapters:[]},EXTRA[id]); n.group=g; ORDER.push(n); }));
@@ -7323,8 +7966,6 @@ $('#scrim').addEventListener('click',closeMenu);
 side.addEventListener('click',e=>{ if(e.target.closest('a.nv')) closeMenu(); });
 let current = null;
 function showView(id){
-  var atlasPages=["karta","chelo","timeline"];
-  if(atlasPages.indexOf(id)>=0){location.href="atlas.html#"+id;return;}
   if(!VIEW_IDS.includes(id)) id='start';
   if(id===current) return;
   current = id;
@@ -8293,6 +8934,3 @@ fixArmor(); fixWeapon(); derive(); fixBr(); fixDeck(); loadHero(); fixDeck(); re
 if(!location.hash){ const v=LS.get('gg-view'); if(v && VIEW_IDS.includes(v) && v!=='start'){ try{ history.replaceState(null,'','#'+v) }catch(e){} } }
 route();
 </script>
-
-</body>
-</html>
