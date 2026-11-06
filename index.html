@@ -622,6 +622,9 @@ nav.pn a.next{text-align:right}
 </div>
 
 <script>
+function $(id){ return document.getElementById(id); }
+function $$(sel){ return Array.from(document.querySelectorAll(sel)); }
+
 (function(){
   const dustLayer = document.querySelector('.dust-layer');
   if (!dustLayer) return;
@@ -6939,8 +6942,7 @@ const CS = (() => {
   }
   function rollD20(){ const r=Math.floor(Math.random()*20)+1; log('d20: '+r); }
   function rollInit(){ const lvl=+el('cs-lvl').value||1; const r=Math.floor(Math.random()*20)+1+lvl; log('Инициатива: d20+'+lvl+' = '+r); }
-  function log(t){ const L=el('cs-log'); L.textContent = t+'
-'+L.textContent; }
+  function log(t){ const L=el('cs-log'); L.textContent = t+'\n'+L.textContent; }
   function exportJSON(){
     const data={name:el('cs-name').value,origin:el('cs-origin').value,class:el('cs-class').value,lvl:+el('cs-lvl').value,stats:{}};
     document.querySelectorAll('.cs-stat-inp').forEach(i=>data.stats[i.dataset.stat]=+i.value);
